@@ -28,17 +28,14 @@ function Tree(l, v, r, tr, g, a, d, o, c){
       return;
     }
     
-    if (this.radius < 0.4)
+    if (this.radius < 0.6)
     {
       this.isDead = true;
       return;
     }
       
     if(this.age > AGE_MATURE * this.radius && this.age < MAX_AGE * this.radius && random() < GROWTH * sqrt(this.radius) && this.generation < MAX_GEN)
-    {
-      //if (this.generation == 2)
-      //  console.log(this.opacity);
-      
+    {      
       var split = (this.generation <= 2)?random(0.15, 0.35):random(0.1, 0.4);
       var splitAngle = PI * ((this.generation <= 2) ? random(0.2, 0.4) : (random(0.4, 0.7) / sqrt(this.generation)));
       if(random()<0.5)
@@ -50,8 +47,8 @@ function Tree(l, v, r, tr, g, a, d, o, c){
       this.age = 0;
       this.generation++;
       
-      this.left = new Tree(this.location, this.velocity, this.radius, this.targetR, this.generation, 0, this.depth + random(-20, 30)/this.generation, this.opacity, this.canvas);
-      this.right = new Tree(this.location, newV, this.radius, this.radius * sqrt(1 - split), this.generation, 0, this.depth + random(-20, 30)/this.generation, this.opacity, this.canvas);
+      this.left = new Tree(this.location, this.velocity, this.radius, this.targetR, this.generation, 0, this.depth + random(-20, 30)/this.generation, this.opacity);
+      this.right = new Tree(this.location, newV, this.radius, this.radius * sqrt(1 - split), this.generation, 0, this.depth + random(-20, 30)/this.generation, this.opacity);
       this.grown = true;
       
       return;
@@ -82,9 +79,9 @@ function Tree(l, v, r, tr, g, a, d, o, c){
       return;
     }
       
-    this.depth = constrain(this.depth, 80, 220);  
+    this.depth = constrain(this.depth, d_min, d_max);  
     this.opacity = constrain(this.opacity, 0, 100);
-    this.canvas.fill(this.depth, this.opacity);
-    this.canvas.ellipse(this.location.x, this.location.y, this.radius*2, this.radius*2);
+    fill(this.depth, this.opacity);
+    ellipse(this.location.x, this.location.y, this.radius*2, this.radius*2);
   }
 }
