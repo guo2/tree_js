@@ -1,7 +1,8 @@
 var MAX_GEN = 7;
-var MAX_AGE = 70;
+var MAX_AGE = 40;
 var AGE_MATURE = 10;
-var GROWTH = 0.06;
+var GROWTH = 0.04;
+var localScale = 1;
 //canvas c
 function Tree(l, v, r, tr, g, a, d, o, c){
   this.left = {};
@@ -34,13 +35,15 @@ function Tree(l, v, r, tr, g, a, d, o, c){
       return;
     }
       
-    if(this.age > AGE_MATURE * this.radius && this.age < MAX_AGE * this.radius && random() < GROWTH * sqrt(this.radius) && this.generation < MAX_GEN)
+    if(
+		this.age > MAX_AGE * map(this.generation, 0, MAX_GEN, 2, 1, true) // 80-40
+		|| this.age > AGE_MATURE * map(this.generation, 0, MAX_GEN, 5, 1, true) // 50 - 10
+		&& random() < GROWTH * map(this.generation, 0, MAX_GEN, 1, 2, true)
+		&& this.generation < MAX_GEN)
     {
-      //if (this.generation == 2)
-      //  console.log(this.opacity);
       
-      var split = (this.generation <= 2)?random(0.15, 0.35):random(0.1, 0.4);
-      var splitAngle = PI * ((this.generation <= 2) ? random(0.2, 0.4) : (random(0.4, 0.7) / sqrt(this.generation)));
+      var split = (this.generation <= 2) ? random(0.15, 0.35) : random(0.2, 0.45);
+      var splitAngle = PI * ((this.generation <= 2) ? random(0.2, 0.4) : random(0.4, 0.7) * map(this.generation, 3, MAX_GEN, 0.5, 0.2, true));
       if(random()<0.5)
         split = 1 - split;
       var newV = this.velocity.copy();
@@ -58,14 +61,15 @@ function Tree(l, v, r, tr, g, a, d, o, c){
     }
 
     if (this.radius > this.targetR || this.age > MAX_AGE * this.radius || this.generation >= MAX_GEN)
-      this.radius*=0.96;
-    else this.radius *= 0.99;
+      this.radius*=0.97;
+    else this.radius *= 0.992;
     
     this.location.add(this.velocity);
-    var angle = PI * random(-0.01, 0.01) * sqrt(this.radius);
+    var angle = PI * random(-0.01, 0.01) * map(this.generation, 0, MAX_GEN, 1, 2, true);
     this.velocity.rotate(angle);
-    this.velocity.y -= 0.025;
-    this.velocity.setMag(1.2);
+	this.velocity.normalize();
+    this.velocity.y -= 0.012;
+    this.velocity.setMag(localScale);
     this.depth += random(-4, 4);
     this.opacity += 8/this.radius;
     this.age++;
@@ -85,6 +89,6 @@ function Tree(l, v, r, tr, g, a, d, o, c){
     this.depth = constrain(this.depth, 80, 220);  
     this.opacity = constrain(this.opacity, 0, 100);
     this.canvas.fill(this.depth, this.opacity);
-    this.canvas.ellipse(this.location.x, this.location.y, this.radius*2, this.radius*2);
+    this.canvas.ellipse(this.location.x, this.location.y, this.radius * 2 * localScale, this.radius * 2 * localScale);
   }
 }
